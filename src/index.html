@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="styles.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <button
+      onclick="topFunction()"
+      ;
+      return
+      false;
+      id="topButton"
+      title="Go to top"
+    >
+      Go to top
+    </button>
+    <div class="container">
+      <h1 class="display-4 mb-2" style="margin-top: 4%">
+        Rock Paper Scissors Results
+      </h1>
+      <div class="input-group mb-3" style="margin-top: 2%" id="input-form">
+        <input
+          type="search"
+          placeholder="Search by player's name"
+          class="form-control search-form"
+          id="search-input"
+        />
+        <div class="input-group-append">
+          <button
+            type="button"
+            id="search-button"
+            onclick="searchPlayer();"
+            return
+            false;
+          >
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex-container">
+        <div
+          class="search-players"
+          style="display: none"
+          id="search-players-div"
+        >
+          <div>
+            <h2 id="match-title">Matching players</h2>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              aria-label="Close"
+              style="margin-left: 95%"
+              onclick="closeSearchResults()"
+            ></button>
+          </div>
+          <table class="table table-striped table-hover">
+            <thead class="table-dark table-hover search-players-cols">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Games played</th>
+                <th scope="col">Games won</th>
+                <th scope="col">Games lost</th>
+                <th scope="col">Draws</th>
+                <th scope="col">Win rate</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody class="table-dark" id="search-players-body"></tbody>
+          </table>
+        </div>
+        <div class="side-container">
+          <div class="sidebar" id="side-bar">
+            <div class="live-games card card-body bg-dark mb-3">
+              <h2 id="live-header">Live games</h2>
+              <div id="live-output">
+                <table
+                  class="table table-striped table-hover live-table-cols"
+                  id="live-cols"
+                >
+                  <thead class="table-dark table-hover">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Player A</th>
+                      <th scope="col">Player B</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-dark" id="live-body"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card card-body bg-dark mb-3" id="recent-div">
+              <h2 id="recent-header">Recent games</h2>
+              <div id="recent-output">
+                <table class="table table-striped table-hover" id="recent-cols">
+                  <thead class="table-dark table-hover">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Winner</th>
+                      <th scope="col">Player A</th>
+                      <th scope="col">Selection</th>
+                      <th scope="col">Player B</th>
+                      <th scope="col">Selection</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-dark" id="recent-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modals" id="modals-div"></div>
+  </body>
+  <script src="./scripts/games.js"></script>
+  <script src="./scripts/players.js"></script>
+  <script src="./scripts/fetch.js"></script>
+  <script src="./scripts/elements.js"></script>
+</html>
