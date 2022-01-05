@@ -6,6 +6,10 @@ class Player {
   won = 0;
   lost = 0;
   draws = 0;
+  rock = 0;
+  scissors = 0;
+  paper = 0;
+
   games = [];
   // Get all games that the player has played
   get allGames() {
@@ -41,6 +45,29 @@ class Player {
   addDraw() {
     this.draws += 1;
   }
+  addRock() {
+    this.rock += 1;
+  }
+  addPaper() {
+    this.paper += 1;
+  }
+  addScissors() {
+    this.scissors += 1;
+  }
+  getMostSelected() {
+    let items = [this.rock, this.scissors, this.paper];
+    let indexOfMaxValue = items.reduce(
+      (iMax, x, i, items) => (x > items[iMax] ? i : iMax),
+      0
+    );
+    if (indexOfMaxValue === 0) {
+      return "Rock";
+    } else if (indexOfMaxValue === 1) {
+      return "Scissors";
+    } else {
+      return "Paper";
+    }
+  }
 
   // Calculate win rate
   winrate() {
@@ -65,13 +92,13 @@ function addPlayerData(res) {
   if (playerExists(aName)) {
     updatePlayer(aName);
   } else {
-    addPlayer(aName, res);
+    addPlayer(aName, res, "a");
   }
   // Check if player b exists in players array
   if (playerExists(bName)) {
     updatePlayer(bName);
   } else {
-    addPlayer(bName, res);
+    addPlayer(bName, res, "b");
   }
   // Checks if a player with given name exists in players array
   function playerExists(name) {
@@ -95,9 +122,10 @@ function addPlayerData(res) {
 }
 
 // Adds a new player-object with given name to players list
-function addPlayer(name, res) {
+function addPlayer(name, res, p) {
   const player = new Player(name);
   player.addGame(res);
+  console.log("res", res);
 
   if (res.winner === name) {
     player.addWin();
@@ -105,6 +133,21 @@ function addPlayer(name, res) {
     player.addDraw();
   } else {
     player.addLoss();
+  }
+  let selection;
+  // Check whether it's player a or player b and what is the selection
+  if (p === "a") {
+    selection = res.aPlayed;
+  } else {
+    selection = res.bPlayed;
+  }
+
+  if (selection === "PAPER") {
+    player.addPaper();
+  } else if (selection === "ROCK") {
+    player.addRock();
+  } else {
+    player.addScissors();
   }
   players.push(player);
 }
@@ -128,6 +171,7 @@ function searchPlayer() {
   matches = players.filter((item) => regex.test(item.name));
 
   addMatchingPlayers();
+  updatePlayerCells();
 
   if (matches.length === 0) {
     noMatches();
@@ -169,6 +213,7 @@ function addMatchingPlayers() {
       const lost = player.lost;
       const draws = player.draws;
       const winrate = player.winrate();
+      const mostSelected = player.getMostSelected();
       const gamesList = player.listAllGames();
 
       // Create row element to append cells to
@@ -177,7 +222,7 @@ function addMatchingPlayers() {
       row.id = splitName(name);
 
       // Loop through properties
-      const properties = [name, total, won, lost, draws, winrate];
+      const properties = [name, total, won, lost, draws, mostSelected, winrate];
 
       for (let j = 0; j < properties.length; j++) {
         let cell = document.createElement("td");
@@ -218,6 +263,8 @@ function addMatchingPlayers() {
 
 // If there are no matching search results, execute this function
 function noMatches() {
+  // clear matches
+  matches = "";
   const table = document.getElementById("search-players-body");
   table.innerHTML = "";
   const properties = ["No matches!", "", "", "", "", "", ""];

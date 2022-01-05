@@ -93,10 +93,10 @@ function showSearchResults() {
   document
     .getElementById("side-bar")
     .setAttribute("style", "width:35%; position: fixed; margin-left: 0%;");
-  updatePlayerCells();
 }
 
 function closeSearchResults() {
+  clearTimeout();
   $("#search-players-div").removeClass("active");
   $("#search-players-div").toggle(100);
   // Set side-bar elements to make it larger and change position to absolute so that it's scrollable
