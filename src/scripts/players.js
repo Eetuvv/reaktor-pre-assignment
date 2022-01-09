@@ -108,9 +108,9 @@ function addPlayerData(res) {
   // Updates existing player details
   function updatePlayer(name) {
     id = splitName(name);
-    table = document.getElementsByTagName("table");
     const player = players.find((p) => p.name === name);
     player.addGame(res);
+
     if (res.winner === player.name) {
       player.addWin();
     } else if (res.winner === "Draw") {
@@ -125,7 +125,6 @@ function addPlayerData(res) {
 function addPlayer(name, res, p) {
   const player = new Player(name);
   player.addGame(res);
-  console.log("res", res);
 
   if (res.winner === name) {
     player.addWin();
@@ -164,10 +163,7 @@ function searchPlayer() {
   }
   // Create a regex object to test for matches
   let regex = new RegExp(searchTerm, "i");
-  // let regex = new RegExp('?<![\w\d])abc(?![\w\d]')
-  // let regex = new RegExp(`\\b${name}\\b`, "i");
-
-  //let matches = players.filter((item) => regex.test(item.name.toLowerCase())); // Tests for a match.
+  // Tests for a match (any matching character, not the best search function).
   matches = players.filter((item) => regex.test(item.name));
 
   addMatchingPlayers();
@@ -193,7 +189,7 @@ function addMatchingPlayers() {
     // Show only first 5 matches for faster performance
     if (matches.length > 5) {
       matchesAmount = 5;
-      title.innerHTML =
+      title.textContent =
         "Showing first " +
         matchesAmount +
         " matches out of " +
@@ -202,7 +198,7 @@ function addMatchingPlayers() {
         searchTerm +
         '"';
     } else {
-      title.innerHTML = 'Matches for search term "' + searchTerm + '"';
+      title.textContent = 'Matches for search term "' + searchTerm + '"';
     }
     // Loop through first 5 matches only
     for (let i = 0; i < matchesAmount; i++) {
@@ -242,15 +238,14 @@ function addMatchingPlayers() {
         btn = document.createElement("td");
         btn.id = splittedName + "-button";
         btn = document.createElement("td");
-        btn.innerHTML = `
-      <button type="button" class="btn" 
-      style="color:white"
-      data-toggle="modal" 
-      data-target="#${splittedName}-modal">
-      Click for more info
-      </button>`;
-        // When user clicks 'more info' button, create a modal to show all games player has played
-        btn.setAttribute("onclick", createModal(name));
+
+        btn.setAttribute("type", "button");
+        btn.setAttribute("style", "color:white");
+        btn.setAttribute("data-toggle", "modal");
+        btn.setAttribute("data-target", "#" + splittedName + "-modal");
+        btn.textContent = "Click for more info";
+        //When user clicks 'more info' button, create a modal to show all games player has played
+        btn.onclick = () => createModal(name);
       }
       row.appendChild(btn);
       // Add new row to table
@@ -320,19 +315,25 @@ function createModal(name) {
     modalHeader = document.createElement("div");
     modalHeader.classList.add("modal-header", "text-center");
     modalHeader.style.textAlign = "center";
+
+    // Create a title for modal
     modalTitle = document.createElement("h5");
-    modalTitle.innerHTML = `
-    <h2>
-    ${name}'s games</h2>
-    <h4>Total amount of games: ${player.total}</h4>
-    `;
+
+    nameTitle = document.createElement("h2");
+    nameTitle.textContent = name + "'s games";
+
+    amountTitle = document.createElement("h4");
+    amountTitle.textContent = "Total amount of games: " + player.total;
+
+    modalTitle.appendChild(nameTitle);
+    modalTitle.appendChild(amountTitle);
     modalTitle.classList.add("modal-title", "w-100");
 
-    closeButton = document.createElement("p");
-    closeButton.innerHTML = `
-    <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-    </button>`;
+    closeBtn = document.createElement("p");
+    closeBtn.setAttribute("type", "button");
+    closeBtn.classList.add("btn", "btn-close");
+    closeBtn.setAttribute("data-dismiss", "modal");
+    closeBtn.setAttribute("aria-label", "Close");
 
     modalBody = document.createElement("div");
     modalBody.classList.add("modal-body");
@@ -342,7 +343,7 @@ function createModal(name) {
     modalBody.appendChild(table);
 
     modalHeader.appendChild(modalTitle);
-    modalHeader.appendChild(closeButton);
+    modalHeader.appendChild(closeBtn);
     modalContent.appendChild(modalHeader);
     modalDialog.appendChild(modalContent);
     modalDialog.appendChild(modalBody);
