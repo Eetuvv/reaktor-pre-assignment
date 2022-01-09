@@ -21,14 +21,14 @@ function collectData(url, page) {
   // Fetch all pages recursively
   try {
     fetchPages(url, page).then((data) => {
-      gameData.push(data.data);
       page = data.cursor;
+      extractData(data.data);
       collectData(url, page);
     });
   } catch (err) {
     return "No more pages";
   } finally {
-    extractData(gameData);
+    // Updates search result table data
     updatePlayerCells();
   }
 }
@@ -36,14 +36,14 @@ function collectData(url, page) {
 // Extract game details from stored data
 function extractData(data) {
   for (let i = 0; i < data.length; i++) {
-    game = data[i][0];
+    // Loop through each game result and extract game data
+    game = data[i];
     const aName = game.playerA.name;
     const bName = game.playerB.name;
     const aPlayed = game.playerA.played;
     const bPlayed = game.playerB.played;
     const gameId = game.gameId;
     const winner = getWinner(aName, aPlayed, bName, bPlayed);
-
     const result = new GameResult(
       aName,
       aPlayed,

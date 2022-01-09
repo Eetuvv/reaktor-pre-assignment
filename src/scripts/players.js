@@ -11,10 +11,7 @@ class Player {
   paper = 0;
 
   games = [];
-  // Get all games that the player has played
-  get allGames() {
-    return this.listAllGames();
-  }
+
   get total() {
     return this.total;
   }
@@ -27,7 +24,7 @@ class Player {
   get draws() {
     return this.draws;
   }
-  // List all games that contain player's name
+  // List all games that player has played
   listAllGames() {
     return this.games;
   }
@@ -55,6 +52,8 @@ class Player {
     this.scissors += 1;
   }
   getMostSelected() {
+    // Calculates which selection player has chosen the most
+    // rock, paper or scissors
     let items = [this.rock, this.scissors, this.paper];
     let indexOfMaxValue = items.reduce(
       (iMax, x, i, items) => (x > items[iMax] ? i : iMax),
@@ -69,7 +68,7 @@ class Player {
     }
   }
 
-  // Calculate win rate
+  // Calculate win rate (wins / total games)
   winrate() {
     if (this.won === 0) {
       return 0 + " %";
@@ -107,10 +106,10 @@ function addPlayerData(res) {
 
   // Updates existing player details
   function updatePlayer(name) {
-    id = splitName(name);
     const player = players.find((p) => p.name === name);
     player.addGame(res);
 
+    // Add a win, loss or draw depending on result
     if (res.winner === player.name) {
       player.addWin();
     } else if (res.winner === "Draw") {
@@ -126,6 +125,8 @@ function addPlayer(name, res, p) {
   const player = new Player(name);
   player.addGame(res);
 
+  // Check if player won, lost or if result was draw
+  // Add result to player's statistics
   if (res.winner === name) {
     player.addWin();
   } else if (res.winner === "Draw") {
@@ -167,7 +168,7 @@ function searchPlayer() {
   matches = players.filter((item) => regex.test(item.name));
 
   addMatchingPlayers();
-  updatePlayerCells();
+  //updatePlayerCells();
 
   if (matches.length === 0) {
     noMatches();
@@ -186,9 +187,9 @@ function addMatchingPlayers() {
     const title = document.getElementById("match-title");
 
     matchesAmount = matches.length;
-    // Show only first 5 matches for faster performance
-    if (matches.length > 5) {
-      matchesAmount = 5;
+    // Show only first 10 matches for faster performance
+    if (matches.length > 10) {
+      matchesAmount = 10;
       title.textContent =
         "Showing first " +
         matchesAmount +
@@ -200,7 +201,7 @@ function addMatchingPlayers() {
     } else {
       title.textContent = 'Matches for search term "' + searchTerm + '"';
     }
-    // Loop through first 5 matches only
+    // Loop through first 10 matches only
     for (let i = 0; i < matchesAmount; i++) {
       const player = matches[i];
       const name = player.name;
@@ -210,7 +211,6 @@ function addMatchingPlayers() {
       const draws = player.draws;
       const winrate = player.winrate();
       const mostSelected = player.getMostSelected();
-      const gamesList = player.listAllGames();
 
       // Create row element to append cells to
       let row = document.createElement("tr");
@@ -289,69 +289,66 @@ function createModal(name) {
   player = players.find((p) => p.name === name);
   games = player.listAllGames();
 
-  try {
-    let modals = document.getElementById("modals-div");
-    id = splitName(name) + "-modal";
-    let modal = document.getElementById(id);
+  let modals = document.getElementById("modals-div");
+  id = splitName(name) + "-modal";
+  let modal = document.getElementById(id);
 
-    if (modal != null) {
-      // Remove old modal if it exists
-      modal = modal.remove();
-    }
-    modal = document.createElement("div");
-
-    modal.id = id;
-    modal.classList.add("modal");
-    modal.setAttribute("role", "dialog");
-    modal.setAttribute("tabindex", "-1");
-
-    let modalDialog = document.createElement("div");
-    modalDialog.classList.add("modal-dialog");
-    modalDialog.setAttribute("role", "document");
-
-    modalContent = document.createElement("div");
-    modalContent.classList.add("modal-content");
-
-    modalHeader = document.createElement("div");
-    modalHeader.classList.add("modal-header", "text-center");
-    modalHeader.style.textAlign = "center";
-
-    // Create a title for modal
-    modalTitle = document.createElement("h5");
-
-    nameTitle = document.createElement("h2");
-    nameTitle.textContent = name + "'s games";
-
-    amountTitle = document.createElement("h4");
-    amountTitle.textContent = "Total amount of games: " + player.total;
-
-    modalTitle.appendChild(nameTitle);
-    modalTitle.appendChild(amountTitle);
-    modalTitle.classList.add("modal-title", "w-100");
-
-    closeBtn = document.createElement("p");
-    closeBtn.setAttribute("type", "button");
-    closeBtn.classList.add("btn", "btn-close");
-    closeBtn.setAttribute("data-dismiss", "modal");
-    closeBtn.setAttribute("aria-label", "Close");
-
-    modalBody = document.createElement("div");
-    modalBody.classList.add("modal-body");
-
-    table = createTable(games, name);
-
-    modalBody.appendChild(table);
-
-    modalHeader.appendChild(modalTitle);
-    modalHeader.appendChild(closeBtn);
-    modalContent.appendChild(modalHeader);
-    modalDialog.appendChild(modalContent);
-    modalDialog.appendChild(modalBody);
-    modal.appendChild(modalDialog);
-    modals.appendChild(modal);
-  } catch (err) {
-    console.log(err);
+  if (modal != null) {
+    // Remove old modal if it exists
+    modal = modal.remove();
   }
+  modal = document.createElement("div");
+
+  modal.id = id;
+  modal.classList.add("modal");
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("tabindex", "-1");
+
+  let modalDialog = document.createElement("div");
+  modalDialog.classList.add("modal-dialog");
+  modalDialog.setAttribute("role", "document");
+
+  modalContent = document.createElement("div");
+  modalContent.classList.add("modal-content");
+
+  modalHeader = document.createElement("div");
+  modalHeader.classList.add("modal-header", "text-center");
+  modalHeader.style.textAlign = "center";
+
+  // Create a title for modal
+  modalTitle = document.createElement("h5");
+
+  nameTitle = document.createElement("h2");
+  nameTitle.textContent = name + "'s games";
+
+  amountTitle = document.createElement("h4");
+  amountTitle.textContent = "Total amount of games: " + player.total;
+
+  modalTitle.appendChild(nameTitle);
+  modalTitle.appendChild(amountTitle);
+  modalTitle.classList.add("modal-title", "w-100");
+
+  closeBtn = document.createElement("p");
+  closeBtn.setAttribute("type", "button");
+  closeBtn.classList.add("btn", "btn-close");
+  closeBtn.setAttribute("data-dismiss", "modal");
+  closeBtn.setAttribute("aria-label", "Close");
+
+  modalBody = document.createElement("div");
+  modalBody.classList.add("modal-body");
+
+  // Create table with game results
+  table = createTable(games, name);
+
+  modalBody.appendChild(table);
+
+  modalHeader.appendChild(modalTitle);
+  modalHeader.appendChild(closeBtn);
+  modalContent.appendChild(modalHeader);
+  modalDialog.appendChild(modalContent);
+  modalDialog.appendChild(modalBody);
+  modal.appendChild(modalDialog);
+  modals.appendChild(modal);
 }
 
 function createTable(games, name) {
@@ -375,6 +372,7 @@ function createTable(games, name) {
   columns = document.createElement("tr");
 
   cols = [
+    "#",
     "Winner",
     "Player A",
     "Selection",
@@ -383,6 +381,7 @@ function createTable(games, name) {
     "Game ID",
   ];
 
+  // Create header cells for table
   for (let j = 0; j < cols.length; j++) {
     th = document.createElement("th");
     th.innerHTML = cols[j];
@@ -397,9 +396,12 @@ function createTable(games, name) {
   const tBody = document.createElement("tbody");
   tBody.classList.add("table-dark");
 
+  // Loop through each game a player has played and add game info to table row
   for (let i = 0; i < games.length; i++) {
     const game = games[i];
 
+    // Count number of games played
+    counter = i + 1;
     const aName = game.aName;
     const aPlayed = game.aPlayed;
     const bName = game.bName;
@@ -409,7 +411,7 @@ function createTable(games, name) {
 
     const row = document.createElement("tr");
 
-    properties = [winner, aName, aPlayed, bName, bPlayed, gameId];
+    properties = [counter, winner, aName, aPlayed, bName, bPlayed, gameId];
 
     for (let j = 0; j < properties.length; j++) {
       let cell = document.createElement("td");

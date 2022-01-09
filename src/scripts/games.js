@@ -101,6 +101,7 @@ function updateLiveGames() {
 }
 
 function addRecent(result) {
+  // Keep track of 5 recent games only
   if (recentGames.length == 5) {
     recentGames.shift();
   }
