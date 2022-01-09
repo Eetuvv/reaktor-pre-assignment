@@ -1,5 +1,3 @@
-// Store all data from games here
-const gameData = [];
 // Fetch Reaktor's API
 function fetchAPI() {
   // send request through cors anywhere proxy to bypass cors-error
@@ -12,7 +10,6 @@ function fetchAPI() {
 async function fetchPages(url, page) {
   const res = await fetch(url + page);
   const data = await res.json();
-
   return data;
 }
 
