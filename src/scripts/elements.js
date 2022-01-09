@@ -1,3 +1,4 @@
+// Set search button functionality
 function showSearchResults() {
   if ($("#search-players-div").hasClass("active")) {
     $("#search-players-div").show();
@@ -8,37 +9,19 @@ function showSearchResults() {
   // Set side-bar elements to make it smaller and change position to fixed so that it stays in place
   document
     .getElementById("side-bar")
-    .setAttribute("style", "width:35%; position: fixed; margin-left: 0%;");
+    .setAttribute(
+      "style",
+      "width:35%; margin-left: 0%; position: fixed; right: auto; left: auto;"
+    );
 }
-
+// Set close button functionality (button next to search results)
 function closeSearchResults() {
   $("#search-players-div").removeClass("active");
   $("#search-players-div").toggle(100);
-  // Set side-bar elements to make it larger and change position to absolute so that it's scrollable
+  // Set side-bar elements to make it larger and its position to absolute
   document
     .getElementById("side-bar")
-    .setAttribute("style", "width:65%; position: absolute; margin-left: 2%;");
-}
-
-// Top button that scrolls to top when clicked
-let topButton = document.getElementById("topButton");
-
-// When the user scrolls down 30px from the top of the document, show the button
-window.onscroll = function () {
-  scrollFunction();
-};
-
-function scrollFunction() {
-  if (document.body.scrollTop > 30 || document.documentElement.scrollTop > 30) {
-    topButton.style.display = "block";
-  } else {
-    topButton.style.display = "none";
-  }
-}
-// When the user clicks on the button, scroll to the top of the document
-function topFunction() {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
+    .setAttribute("style", "width:65%; margin-left: 2%; right: 35%; left: 15%");
 }
 
 // Set enter button functionality to hit search button on enter press

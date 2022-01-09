@@ -31,6 +31,8 @@ h2 {
 }
 .sidebar {
   position: absolute;
+  right: 35%;
+  left: 15%;
   width: 65%;
   margin-top: 1.5%;
   height: min-content;
@@ -42,6 +44,7 @@ h2 {
 .live-table-items {
   font-size: 17px;
 }
+
 .search-players {
   margin-right: 4%;
   width: 100%;

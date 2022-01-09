@@ -164,7 +164,7 @@ function searchPlayer() {
   }
   // Create a regex object to test for matches
   let regex = new RegExp(searchTerm, "i");
-  // Tests for a match (any matching character, not the best search function).
+  // Tests for a match (any matching character; not the best search function)
   matches = players.filter((item) => regex.test(item.name));
 
   addMatchingPlayers();
@@ -301,7 +301,7 @@ function createModal(name) {
   modal.classList.add("modal", "fade");
   modal.setAttribute("role", "dialog");
   modal.setAttribute("tabindex", "-1");
-  modal.setAttribute("data-backdrop", "false");
+  modal.setAttribute("data-backdrop", "true");
 
   let modalDialog = document.createElement("div");
   modalDialog.classList.add("modal-dialog");
@@ -321,6 +321,10 @@ function createModal(name) {
   nameTitle.textContent = name + "'s games";
 
   const amountTitle = document.createElement("h4");
+  // Sub-title in player's modal containing game history
+  // Shows amount of games in total. Save ID to update it later
+  amountTitleId = splitName(name) + "-amountTitle";
+  amountTitle.id = amountTitleId;
   amountTitle.textContent = "Total amount of games: " + player.total;
 
   modalTitle.appendChild(nameTitle);
@@ -365,7 +369,13 @@ function createModal(name) {
 
   // Updates modal table contents (list of all player's games)
   selectionBtn.onchange = () =>
-    updateModalTable(games, tableId, tBodyId, selectionBtn.value);
+    updateModalTable(
+      games,
+      tableId,
+      tBodyId,
+      amountTitleId,
+      selectionBtn.value
+    );
 
   modalFooter.appendChild(selectionBtn);
 
@@ -392,10 +402,9 @@ function createModalTable(games, name) {
   }
   table = document.createElement("table");
   table.id = name + "-table";
-  //const table = document.createElement("table");
-  const tHead = document.createElement("thead");
-
   table.classList.add("table", "table-striped", "table-hover");
+
+  const tHead = document.createElement("thead");
   tHead.classList.add("table-dark", "table-hover");
   tHead.scope = "col";
 
@@ -465,7 +474,7 @@ function createModalTable(games, name) {
 }
 
 // Update games list for each player. (Showing thousands of games results at once is slow)
-function updateModalTable(games, table, tBody, val) {
+function updateModalTable(games, table, tBody, amountTitle, val) {
   // Val = selection box value
   if (val === "All" || val > games.length) {
     val = games.length;
@@ -499,8 +508,12 @@ function updateModalTable(games, table, tBody, val) {
       row.appendChild(cell);
     }
     tBody.appendChild(row);
-    table.appendChild(tBody);
   }
+  table.appendChild(tBody);
+
+  // Update title that shows total amount of games a player has played
+  amountTitle = document.getElementById(amountTitle);
+  amountTitle.textContent = "Total amount of games: " + games.length;
 }
 
 // Updates total game statistics for player (win rate, total games etc)
