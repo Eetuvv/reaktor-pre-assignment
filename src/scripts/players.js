@@ -168,7 +168,6 @@ function searchPlayer() {
   matches = players.filter((item) => regex.test(item.name));
 
   addMatchingPlayers();
-  //updatePlayerCells();
 
   if (matches.length === 0) {
     noMatches();
@@ -237,7 +236,6 @@ function addMatchingPlayers() {
       if (btn === null) {
         btn = document.createElement("td");
         btn.id = splittedName + "-button";
-        btn = document.createElement("td");
 
         btn.setAttribute("type", "button");
         btn.setAttribute("style", "color:white");
@@ -286,8 +284,8 @@ function splitName(name) {
 }
 
 function createModal(name) {
-  player = players.find((p) => p.name === name);
-  games = player.listAllGames();
+  const player = players.find((p) => p.name === name);
+  const games = player.listAllGames();
 
   let modals = document.getElementById("modals-div");
   id = splitName(name) + "-modal";
@@ -300,35 +298,36 @@ function createModal(name) {
   modal = document.createElement("div");
 
   modal.id = id;
-  modal.classList.add("modal");
+  modal.classList.add("modal", "fade");
   modal.setAttribute("role", "dialog");
   modal.setAttribute("tabindex", "-1");
+  modal.setAttribute("data-backdrop", "false");
 
   let modalDialog = document.createElement("div");
   modalDialog.classList.add("modal-dialog");
   modalDialog.setAttribute("role", "document");
 
-  modalContent = document.createElement("div");
+  let modalContent = document.createElement("div");
   modalContent.classList.add("modal-content");
 
-  modalHeader = document.createElement("div");
+  let modalHeader = document.createElement("div");
   modalHeader.classList.add("modal-header", "text-center");
   modalHeader.style.textAlign = "center";
 
   // Create a title for modal
-  modalTitle = document.createElement("h5");
+  let modalTitle = document.createElement("h5");
 
-  nameTitle = document.createElement("h2");
+  let nameTitle = document.createElement("h2");
   nameTitle.textContent = name + "'s games";
 
-  amountTitle = document.createElement("h4");
+  const amountTitle = document.createElement("h4");
   amountTitle.textContent = "Total amount of games: " + player.total;
 
   modalTitle.appendChild(nameTitle);
   modalTitle.appendChild(amountTitle);
   modalTitle.classList.add("modal-title", "w-100");
 
-  closeBtn = document.createElement("p");
+  let closeBtn = document.createElement("p");
   closeBtn.setAttribute("type", "button");
   closeBtn.classList.add("btn", "btn-close");
   closeBtn.setAttribute("data-dismiss", "modal");
@@ -338,30 +337,61 @@ function createModal(name) {
   modalBody.classList.add("modal-body");
 
   // Create table with game results
-  table = createTable(games, name);
+  // Returns table, table id and table body id in array
+  tableContent = createModalTable(games, name);
+
+  const table = tableContent[0];
+  const tableId = tableContent[1];
+  const tBodyId = tableContent[2];
 
   modalBody.appendChild(table);
+
+  let modalFooter = document.createElement("div");
+
+  let selectionBtn = document.createElement("select");
+  selectionBtn.classList.add("form-select");
+  selectionBtn.innerHTML = `
+  <option selected value="100">100 games (default)</option>
+  <option value="200">200 games</option>
+  <option value="500">500 games</option>
+  <option value="1000">1000 games</option>
+  <option value="2000">2000 games</option>
+  <option value="All">All games</option>
+  `;
+  selectionBtn.setAttribute(
+    "style",
+    "width: 50%; margin-left: 5px; margin-top: 10px; width: 40%;"
+  );
+
+  // Updates modal table contents (list of all player's games)
+  selectionBtn.onchange = () =>
+    updateModalTable(games, tableId, tBodyId, selectionBtn.value);
+
+  modalFooter.appendChild(selectionBtn);
 
   modalHeader.appendChild(modalTitle);
   modalHeader.appendChild(closeBtn);
   modalContent.appendChild(modalHeader);
+  modalContent.appendChild(modalFooter);
   modalDialog.appendChild(modalContent);
   modalDialog.appendChild(modalBody);
   modal.appendChild(modalDialog);
   modals.appendChild(modal);
 }
 
-function createTable(games, name) {
+function createModalTable(games, name) {
   // Create table for modal
-  id = splitName(name) + "-modal";
-  let table = document.getElementById(id);
+  name = splitName(name);
+  const tableId = name + "-table";
+  const tBodyId = name + "-tBody";
+  let table = document.getElementById(tableId);
 
   // If table exists, remove it and create a new on to keep items up-to-date
   if (table != null) {
     table = table.remove();
   }
   table = document.createElement("table");
-  table.id = splitName(name) + "-modal";
+  table.id = name + "-table";
   //const table = document.createElement("table");
   const tHead = document.createElement("thead");
 
@@ -396,8 +426,16 @@ function createTable(games, name) {
   const tBody = document.createElement("tbody");
   tBody.classList.add("table-dark");
 
-  // Loop through each game a player has played and add game info to table row
-  for (let i = 0; i < games.length; i++) {
+  tBody.id = tBodyId;
+
+  // Loop through games a player has played and add game info to table row
+  // Limit to show only 100 games first
+
+  let gameAmount = games.length;
+  if (games.length > 100) {
+    gameAmount = 100;
+  }
+  for (let i = 0; i < gameAmount; i++) {
     const game = games[i];
 
     // Count number of games played
@@ -422,8 +460,49 @@ function createTable(games, name) {
     tBody.appendChild(row);
     table.appendChild(tBody);
   }
-  return table;
+
+  return [table, tableId, tBodyId];
 }
+
+// Update games list for each player. (Showing thousands of games results at once is slow)
+function updateModalTable(games, table, tBody, val) {
+  // Val = selection box value
+  if (val === "All" || val > games.length) {
+    val = games.length;
+  }
+
+  table = document.getElementById(table);
+  tBody = document.getElementById(tBody);
+  // Clear table body to append new values
+  tBody.innerHTML = "";
+
+  for (let i = 0; i < val; i++) {
+    const game = games[i];
+
+    // Count number of games played
+    counter = i + 1;
+    const aName = game.aName;
+    const aPlayed = game.aPlayed;
+    const bName = game.bName;
+    const bPlayed = game.bPlayed;
+    const winner = game.winner;
+    const gameId = game.gameId;
+
+    const row = document.createElement("tr");
+
+    properties = [counter, winner, aName, aPlayed, bName, bPlayed, gameId];
+
+    for (let j = 0; j < properties.length; j++) {
+      let cell = document.createElement("td");
+
+      cell.innerHTML = properties[j];
+      row.appendChild(cell);
+    }
+    tBody.appendChild(row);
+    table.appendChild(tBody);
+  }
+}
+
 // Updates total game statistics for player (win rate, total games etc)
 function updatePlayerCells() {
   try {
